@@ -1,31 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { StackNavigator } from 'react-navigation';
 
-import configureStore from './configureStore';
+import HomeScreen from './screens/HomeScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
-import ImageListContainer from './components/imagelist/ImageListContainer';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+const App = StackNavigator({
+	Home: { screen: HomeScreen },
+	Profile: { screen: ProfileScreen }
 });
 
-const store = configureStore();
-
-export default class App extends Component {
-
-	render() {
-		return (
-			<Provider store={store}>
-				<ImageListContainer style={styles.container}/>
-			</Provider>
-		);
-	}
-  
-}
+export default App;

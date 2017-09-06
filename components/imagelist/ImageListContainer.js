@@ -17,7 +17,6 @@ import { fetchData } from '../../actions';
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		marginTop: 24,
 	},
 	loaderContainer: {
 		flex: 1,
@@ -61,12 +60,13 @@ const styles = StyleSheet.create({
 });
 
 class ImageListContainer extends Component {
-	constructor() {
+	constructor(props) {
 		super();
 
 		list = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 		this.state = {
-			dataSource: list.cloneWithRows([])
+			dataSource: list.cloneWithRows([]),
+			onClick: props.onClick
 		};
 	}
 
@@ -91,6 +91,10 @@ class ImageListContainer extends Component {
 	render() {
 		if (this.props.store.appData.error) {
 			Alert.alert('Error', 'Network request failed');
+			return <Text 
+					style={{textAlign: 'center', fontSize: 22}}>
+					Error
+					</Text>
 		} else {
 			if (this.props.store.appData.isFetching || !this.props.store.appData.dataFetched) 
 				return this.renderLoadingView();
@@ -112,6 +116,7 @@ class ImageListContainer extends Component {
 	}
 
 	renderListView() {
+		console.log('renderListView');
 		this.state.dataSource=this.state.dataSource.cloneWithRows(this.props.store.appData.data);
 
 		return(
@@ -120,7 +125,7 @@ class ImageListContainer extends Component {
 					<TouchableHighlight onPress={this.loadPrevPage}>
 						<Text style={styles.navigateBtn}>Prev</Text>
 					</TouchableHighlight>
-					<Text style={styles.headerTitle}>Users list page: {this.props.store.appData.currentPage-1}</Text>
+					<Text style={styles.headerTitle}>Page: {this.props.store.appData.currentPage-1}</Text>
 					<TouchableHighlight onPress={this.loadNextPage}>
 						<Text style={styles.navigateBtn}>Next</Text>
 					</TouchableHighlight>
@@ -129,7 +134,7 @@ class ImageListContainer extends Component {
 				<ListView 
 					dataSource={this.state.dataSource}
 					renderRow={this.renderRow}
-					onEndReachedThreshold={1}
+					onEndReachedThreshold={10}
 					onEndReached={this.loadNextPage}
 				/>
 			</View>
@@ -137,15 +142,23 @@ class ImageListContainer extends Component {
 	}
 
 	renderRow = (props) => (
-		<View style={styles.userContainer}>
-			<Image 
-				source={{ uri: props.image_url}}
-				style={styles.photo}
-				resizeMode="cover"
-			/>
-			<Text>{props.name}</Text>
-		</View>
+		<TouchableHighlight 
+			style={styles.userContainer}
+			onPress={() => this.onRowSelected(props)}
+			underlayColor='lightgray'>
+			<View style={{alignItems: 'center'}}>
+				<Image 
+					source={{ uri: props.image_url}}
+					style={styles.photo}
+				/>
+				<Text>{props.name}</Text>
+			</View>
+		</TouchableHighlight>
 	);
+
+	onRowSelected = (props) => {
+		this.state.onClick('Profile', { profile: props });
+	}
 
 }
 
