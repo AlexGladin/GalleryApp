@@ -10,7 +10,6 @@ import {
 	ActivityIndicator,
 	TouchableHighlight } from 'react-native';
 import { connect } from 'react-redux';
-import InfiniteScrollView from 'react-native-infinite-scroll-view';
 
 import { fetchData } from '../../actions';
 
